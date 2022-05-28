@@ -662,6 +662,10 @@ func NewDaemon(ctx context.Context, cancel context.CancelFunc, epMgr *endpointma
 
 	if k8s.IsEnabled() {
 		bootstrapStats.k8sInit.Start()
+		if err := k8s.Init(option.Config); err != nil {
+			return nil, nil, fmt.Errorf("Unable to initialize Kubernetes subsystem: %w", err)
+		}
+
 		// Errors are handled inside WaitForCRDsToRegister. It will fatal on a
 		// context deadline or if the context has been cancelled, the context's
 		// error will be returned. Otherwise, it succeeded.
