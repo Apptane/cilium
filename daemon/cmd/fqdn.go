@@ -28,6 +28,7 @@ import (
 	"github.com/cilium/cilium/pkg/ipcache"
 	"github.com/cilium/cilium/pkg/logging/logfields"
 	"github.com/cilium/cilium/pkg/metrics"
+	"github.com/cilium/cilium/pkg/node"
 	"github.com/cilium/cilium/pkg/option"
 	"github.com/cilium/cilium/pkg/policy"
 	policyApi "github.com/cilium/cilium/pkg/policy/api"
@@ -371,13 +372,21 @@ func (d *Daemon) updateSelectors(ctx context.Context, selectorWithIPsToUpdate ma
 }
 
 // lookupEPByIP returns the endpoint that this IP belongs to
-func (d *Daemon) lookupEPByIP(endpointIP net.IP) (endpoint *endpoint.Endpoint, err error) {
-	e := d.endpointManager.LookupIP(endpointIP)
-	if e == nil {
-		return nil, fmt.Errorf("Cannot find endpoint with IP %s", endpointIP.String())
+func (d *Daemon) lookupEPByIP(endpointIP net.IP) (endpoint *endpoint.Endpoint, isHost bool, err error) {
+	if e := d.endpointManager.LookupIP(endpointIP); e != nil {
+		return e, e.IsHost(), nil
 	}
 
-	return e, nil
+	// TODO: this works in very simple cases but is obviously not the correct way to do it
+	if endpointIP.Equal(node.GetIPv4()) {
+		if e := d.endpointManager.GetHostEndpoint(); e != nil {
+			return e, true, nil
+		} else {
+			return nil, true, errors.New("Host endpoint has not been created yet")
+		}
+	}
+
+	return nil, false, fmt.Errorf("Cannot find endpoint with IP %s", endpointIP.String())
 }
 
 func (d *Daemon) lookupIPsBySecID(nid identity.NumericIdentity) []string {
