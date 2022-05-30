@@ -83,6 +83,7 @@ require (
 	golang.org/x/sys v0.0.0-20211103184734-ae416a5f93c7
 	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac
 	golang.org/x/tools v0.1.7
+	golang.zx2c4.com/go118/netip v0.0.0-20211111135330-a4a02eeacf9d
 	golang.zx2c4.com/wireguard v0.0.0-20211017052713-f87e87af0d9a
 	golang.zx2c4.com/wireguard/wgctrl v0.0.0-20211027115401-c9b1ec1aa6d8
 	google.golang.org/genproto v0.0.0-20211208223120-3a66f561d7aa

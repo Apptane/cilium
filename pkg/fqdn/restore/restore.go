@@ -9,8 +9,12 @@
 package restore
 
 import (
+	"bytes"
+	"fmt"
 	"regexp"
 	"sort"
+
+	"golang.zx2c4.com/go118/netip" // replace with netip when upgrading to go 1.18
 )
 
 // DNSRules contains IP-based DNS rules for a set of ports (e.g., 53)
@@ -22,7 +26,70 @@ type IPRules []IPRule
 // IPRule stores the allowed destination IPs for a DNS names matching a regex
 type IPRule struct {
 	Re  RuleRegex
-	IPs map[string]struct{} // IPs, nil set is wildcard and allows all IPs!
+	IPs map[RuleIPOrCIDR]struct{} // IPs, nil set is wildcard and allows all IPs!
+}
+
+// RuleIPOrCIDR is one allowed destination IP or CIDR
+// It marshals to/from text in a way that is compatible with net.IP and CIDRs
+type RuleIPOrCIDR netip.Prefix
+
+func ParseRuleIPOrCIDR(s string) (ip RuleIPOrCIDR, err error) {
+	err = ip.UnmarshalText([]byte(s))
+	return
+}
+
+func MustParseRuleIPOrCIDR(s string) (ip RuleIPOrCIDR) {
+	if err := ip.UnmarshalText([]byte(s)); err != nil {
+		panic(fmt.Errorf("bad input '%s': %s", s, err))
+	}
+	return
+}
+
+func (ip RuleIPOrCIDR) ContainsAddr(addr RuleIPOrCIDR) bool {
+	return addr.IsAddr() && netip.Prefix(ip).Contains(netip.Prefix(addr).Addr())
+}
+
+func (ip RuleIPOrCIDR) IsAddr() bool {
+	return netip.Prefix(ip).Bits() == -1
+}
+
+func (ip RuleIPOrCIDR) String() string {
+	if ip.IsAddr() {
+		return netip.Prefix(ip).Addr().String()
+	} else {
+		return netip.Prefix(ip).String()
+	}
+}
+
+func (ip RuleIPOrCIDR) ToSingleCIDR() RuleIPOrCIDR {
+	addr := netip.Prefix(ip).Addr()
+	return RuleIPOrCIDR(netip.PrefixFrom(addr, addr.BitLen()))
+}
+
+func (ip RuleIPOrCIDR) MarshalText() ([]byte, error) {
+	if ip.IsAddr() {
+		return netip.Prefix(ip).Addr().MarshalText()
+	} else {
+		return netip.Prefix(ip).MarshalText()
+	}
+}
+
+func (ip *RuleIPOrCIDR) UnmarshalText(b []byte) (err error) {
+	if b == nil {
+		return fmt.Errorf("cannot unmarshal nil into RuleIPOrCIDR")
+	}
+	if i := bytes.IndexByte(b, byte('/')); i < 0 {
+		var addr netip.Addr
+		if err = addr.UnmarshalText(b); err == nil {
+			*ip = RuleIPOrCIDR(netip.PrefixFrom(addr, 0xff))
+		}
+	} else {
+		var prefix netip.Prefix
+		if err = prefix.UnmarshalText(b); err == nil {
+			*ip = RuleIPOrCIDR(prefix)
+		}
+	}
+	return
 }
 
 // RuleRegex is a wrapper for *regexp.Regexp so that we can define marshalers for it.

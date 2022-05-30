@@ -949,6 +949,12 @@ golang.org/x/tools/internal/typesinternal
 ## explicit; go 1.11
 golang.org/x/xerrors
 golang.org/x/xerrors/internal
+# golang.zx2c4.com/go118/netip v0.0.0-20211111135330-a4a02eeacf9d
+## explicit; go 1.17
+golang.zx2c4.com/go118/netip
+golang.zx2c4.com/go118/netip/internal/bytealg
+golang.zx2c4.com/go118/netip/internal/intern
+golang.zx2c4.com/go118/netip/internal/itoa
 # golang.zx2c4.com/wireguard v0.0.0-20211017052713-f87e87af0d9a
 ## explicit; go 1.17
 golang.zx2c4.com/wireguard/conn
