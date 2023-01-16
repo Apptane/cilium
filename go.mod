@@ -18,7 +18,7 @@ require (
 	github.com/blang/semver/v4 v4.0.0
 	github.com/cilium/customvet v0.0.0-20201209211516-9852765c1ac4
 	github.com/cilium/deepequal-gen v0.0.0-20200406125435-ad6a9003139e
-	github.com/cilium/ebpf v0.8.1
+	github.com/cilium/ebpf v0.10.0
 	github.com/cilium/ipam v0.0.0-20211026130907-54a76012817c
 	github.com/cilium/lumberjack/v2 v2.2.2
 	github.com/cilium/proxy v0.0.0-20220310090216-617157adcd74
@@ -39,7 +39,7 @@ require (
 	github.com/gogo/protobuf v1.3.2
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da
 	github.com/golang/protobuf v1.5.2
-	github.com/google/go-cmp v0.5.8
+	github.com/google/go-cmp v0.5.9
 	github.com/google/gopacket v1.1.19
 	github.com/google/gops v0.3.23
 	github.com/google/renameio v1.0.1
@@ -50,7 +50,7 @@ require (
 	github.com/hashicorp/golang-lru v0.5.4
 	github.com/jeremywohl/flatten v1.0.1
 	github.com/kevinburke/ssh_config v1.2.0
-	github.com/kr/pretty v0.3.0
+	github.com/kr/pretty v0.3.1
 	github.com/mattn/go-shellwords v1.0.12
 	github.com/miekg/dns v1.1.43
 	github.com/onsi/ginkgo v1.16.5
@@ -82,7 +82,7 @@ require (
 	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4
 	golang.org/x/net v0.0.0-20220412020605-290c469a71a5
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
-	golang.org/x/sys v0.0.0-20220412211240-33da011f77ad
+	golang.org/x/sys v0.2.0
 	golang.org/x/time v0.0.0-20220210224613-90d013bbcef8
 	golang.org/x/tools v0.1.10
 	golang.zx2c4.com/wireguard v0.0.0-20211017052713-f87e87af0d9a
@@ -198,7 +198,7 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/power-devops/perfstat v0.0.0-20210106213030-5aafc221ea8c // indirect
 	github.com/prometheus/common v0.32.1 // indirect
-	github.com/rogpeppe/go-internal v1.8.0 // indirect
+	github.com/rogpeppe/go-internal v1.9.0 // indirect
 	github.com/spf13/afero v1.8.2 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/subosito/gotenv v1.2.0 // indirect
