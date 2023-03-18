@@ -47,6 +47,7 @@ type LinkAttrs struct {
 	NumRxQueues  int
 	GSOMaxSize   uint32
 	GSOMaxSegs   uint32
+	GROMaxSize   uint32
 	Vfs          []VfInfo // virtual functions available on link
 	Group        uint32
 	Slave        LinkSlave
@@ -1038,6 +1039,7 @@ type Iptun struct {
 	EncapType  uint16
 	EncapFlags uint16
 	FlowBased  bool
+	Proto      uint8
 }
 
 func (iptun *Iptun) Attrs() *LinkAttrs {
@@ -1164,6 +1166,7 @@ type Gretun struct {
 	EncapFlags uint16
 	EncapSport uint16
 	EncapDport uint16
+	FlowBased  bool
 }
 
 func (gretun *Gretun) Attrs() *LinkAttrs {

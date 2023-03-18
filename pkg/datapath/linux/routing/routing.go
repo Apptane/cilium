@@ -61,6 +61,7 @@ func (info *RoutingInfo) Configure(ip net.IP, mtu int, compat bool) error {
 		Priority: linux_defaults.RulePriorityIngress,
 		To:       &ipWithMask,
 		Table:    route.MainTable,
+		Protocol: unix.RTPROT_KERNEL,
 	}); err != nil {
 		return fmt.Errorf("unable to install ip rule: %s", err)
 	}
@@ -84,6 +85,7 @@ func (info *RoutingInfo) Configure(ip net.IP, mtu int, compat bool) error {
 				From:     &ipWithMask,
 				To:       &cidr,
 				Table:    tableID,
+				Protocol: unix.RTPROT_KERNEL,
 			}); err != nil {
 				return fmt.Errorf("unable to install ip rule: %s", err)
 			}
@@ -94,6 +96,7 @@ func (info *RoutingInfo) Configure(ip net.IP, mtu int, compat bool) error {
 			Priority: egressPriority,
 			From:     &ipWithMask,
 			Table:    tableID,
+			Protocol: unix.RTPROT_KERNEL,
 		}); err != nil {
 			return fmt.Errorf("unable to install ip rule: %s", err)
 		}
@@ -108,15 +111,17 @@ func (info *RoutingInfo) Configure(ip net.IP, mtu int, compat bool) error {
 		Dst:       &net.IPNet{IP: info.IPv4Gateway, Mask: net.CIDRMask(32, 32)},
 		Scope:     netlink.SCOPE_LINK,
 		Table:     tableID,
+		Protocol:  unix.RTPROT_KERNEL,
 	}); err != nil {
 		return fmt.Errorf("unable to add L2 nexthop route: %s", err)
 	}
 
 	// Default route to the VPC or subnet gateway
 	if err := netlink.RouteReplace(&netlink.Route{
-		Dst:   &net.IPNet{IP: net.IPv4zero, Mask: net.CIDRMask(0, 32)},
-		Table: tableID,
-		Gw:    info.IPv4Gateway,
+		Dst:      &net.IPNet{IP: net.IPv4zero, Mask: net.CIDRMask(0, 32)},
+		Table:    tableID,
+		Gw:       info.IPv4Gateway,
+		Protocol: unix.RTPROT_KERNEL,
 	}); err != nil {
 		return fmt.Errorf("unable to add L2 nexthop route: %s", err)
 	}
@@ -239,6 +244,7 @@ func SetupRules(from, to *net.IPNet, mac string, ifaceNum int) error {
 		From:     from,
 		To:       to,
 		Table:    tableId,
+		Protocol: unix.RTPROT_KERNEL,
 	})
 }
 
